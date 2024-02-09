@@ -57,6 +57,7 @@ const config = {
             },
         ],
         "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/restrict-template-expressions": "off",
         "import/prefer-default-export": "off",
         "arrow-body-style": "off",
     },

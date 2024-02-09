@@ -6,7 +6,7 @@
 -   Zod must be used for validating endpoint parameters and data from the SQLite database.
 -   The API documentation must be updated to reflect new capabilities and must reside within the repository.
 
-## API Endpoints
+## API Endpoints
 
 -   CRUD Operations for Todos:
     -   Create new todo items.
