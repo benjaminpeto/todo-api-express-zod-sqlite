@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type Task } from "@/models/tasks.model";
@@ -55,6 +56,57 @@ export async function getTasks() {
             throw new Error(err.message);
         } else {
             throw new Error("An error occurred while fetching tasks");
+        }
+    }
+}
+
+export async function getTask(id: number) {
+    try {
+        const task: Task[] = await knexInstance.select("*").from("task").where({ id });
+        return task;
+    } catch (err) {
+        if (err instanceof Error) {
+            throw new Error(err.message);
+        } else {
+            throw new Error("An error occurred while fetching a task");
+        }
+    }
+}
+
+export async function addTask(task: Task) {
+    try {
+        await knexInstance("task").insert(task);
+    } catch (err) {
+        if (err instanceof Error) {
+            throw new Error(err.message);
+        } else {
+            throw new Error("An error occurred while adding a task");
+        }
+    }
+}
+
+// update existing task
+export async function updateTask(id: number, task: Task) {
+    try {
+        await knexInstance("task").where({ id: id }).update(task);
+    } catch (err) {
+        if (err instanceof Error) {
+            throw new Error(err.message);
+        } else {
+            throw new Error("An error occurred while updating a task");
+        }
+    }
+}
+
+// delete existing task
+export async function deleteTask(id: number) {
+    try {
+        await knexInstance("task").where({ id }).del();
+    } catch (err) {
+        if (err instanceof Error) {
+            throw new Error(err.message);
+        } else {
+            throw new Error("An error occurred while deleting a task");
         }
     }
 }
