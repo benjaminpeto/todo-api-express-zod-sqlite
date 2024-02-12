@@ -58,15 +58,14 @@ function handleError(err: unknown, message: string): never {
     }
 }
 
-export async function getTasks(): Promise<Task[]> {
+export async function getTasks(limit: number, offset: number): Promise<Task[]> {
     try {
-        const tasks: Task[] = await knexInstance.select("*").from("task");
+        const tasks: Task[] = await knexInstance.select("*").from("task").limit(limit).offset(offset);
         return tasks;
     } catch (err) {
         handleError(err, "An error occurred while fetching all tasks");
     }
 }
-
 export async function getTask(id: number): Promise<TaskIdParam[]> {
     try {
         const task = await knexInstance.select("*").from("task").where({ id });

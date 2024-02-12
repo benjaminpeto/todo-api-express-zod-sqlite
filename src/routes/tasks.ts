@@ -11,9 +11,14 @@ const router = express.Router();
 // Get all tasks
 router.get("/", async (req: Request, res: Response) => {
     try {
-        const tasks = await getTasks();
-        console.log(tasks);
-        res.json(tasks);
+        const limit = Number(req.query.limit) || 10; // default limit to 10
+        const offset = Number(req.query.offset) || 0; // default offset to 0
+        const tasks = await getTasks(limit, offset);
+        if (tasks.length === 0) {
+            res.status(404).json({ message: "No more tasks to show" });
+        } else {
+            res.json(tasks);
+        }
     } catch (err) {
         res.status(500).json(err);
     }
