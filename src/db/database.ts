@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { type Task } from "@/models/tasks.model";
+import { type Task, type TaskIdParam } from "@/models/tasks.model";
 import { type Knex, knex } from "knex";
 
 const config: Knex.Config = {
@@ -60,9 +60,9 @@ export async function getTasks() {
     }
 }
 
-export async function getTask(id: number) {
+export async function getTask(id: string) {
     try {
-        const task: Task[] = await knexInstance.select("*").from("task").where({ id });
+        const task: TaskIdParam[] = await knexInstance.select("*").from("task").where({ id });
         return task;
     } catch (err) {
         if (err instanceof Error) {
@@ -85,7 +85,6 @@ export async function addTask(task: Task) {
     }
 }
 
-// update existing task
 export async function updateTask(id: number, task: Task) {
     try {
         await knexInstance("task").where({ id: id }).update(task);
@@ -98,8 +97,7 @@ export async function updateTask(id: number, task: Task) {
     }
 }
 
-// delete existing task
-export async function deleteTask(id: number) {
+export async function deleteTask(id: string) {
     try {
         await knexInstance("task").where({ id }).del();
     } catch (err) {

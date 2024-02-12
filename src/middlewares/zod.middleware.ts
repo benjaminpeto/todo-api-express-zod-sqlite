@@ -1,20 +1,16 @@
 import { type NextFunction, type Request, type Response } from "express";
-import { z } from "zod";
+import { type AnyZodObject } from "zod";
 
-export function zodMiddleware(err: unknown, _req: Request, res: Response, _next: NextFunction): void {
-    if (err instanceof z.ZodError) {
-        res.status(400).json({
-            error: err.flatten(),
+export const validate = (schema: AnyZodObject) => async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await schema.parseAsync({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            body: req.body,
+            query: req.query,
+            params: req.params,
         });
-        return;
-    } else if (err instanceof Error) {
-        const error = err as Error & { statusCode?: number };
-        res.status(error.statusCode ?? 400).json({
-            message: err.message,
-        });
-        return;
+        next();
+    } catch (error) {
+        return res.status(400).json(error);
     }
-    res.status(500).json({
-        message: "Internal server error",
-    });
-}
+};

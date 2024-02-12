@@ -1,5 +1,5 @@
 import express, { type Request, type Response, type Application, type Router } from "express";
-import { zodMiddleware } from "./middlewares/zod.middleware";
+import { validate } from "./middlewares/zod.middleware";
 import userRouter from "./routes/users";
 import todosRouter from "./routes/tasks";
 
@@ -13,7 +13,7 @@ app.get("/", (_req: Request, res: Response) => {
     res.send("Home page");
 });
 
-app.use(zodMiddleware);
+app.use(validate);
 
 const PORT = 5000;
 app.listen(PORT, () => {
