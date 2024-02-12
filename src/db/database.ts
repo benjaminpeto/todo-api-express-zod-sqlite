@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type Task, type TaskIdParam } from "@/models/tasks.model";
 import { type Knex, knex } from "knex";
 
@@ -18,6 +20,7 @@ knexInstance.schema
         if (!exists) {
             return knexInstance.schema.createTable("task", function (table) {
                 table.increments("id");
+                // rename col to descriptions
                 table.string("name");
                 table.boolean("completed").defaultTo(false);
             });
@@ -64,7 +67,7 @@ export async function getTasks(): Promise<Task[]> {
     }
 }
 
-export async function getTask(id: string): Promise<TaskIdParam[]> {
+export async function getTask(id: number): Promise<TaskIdParam[]> {
     try {
         const task = await knexInstance.select("*").from("task").where({ id });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -76,7 +79,8 @@ export async function getTask(id: string): Promise<TaskIdParam[]> {
 
 export async function addTask(task: Task): Promise<void> {
     try {
-        await taskTable.insert(task);
+        const newTask = { ...task, completed: false };
+        await taskTable.insert(newTask);
     } catch (err) {
         handleError(err, "An error occurred while adding a task");
     }
@@ -84,15 +88,25 @@ export async function addTask(task: Task): Promise<void> {
 
 export async function updateTask(id: number, task: Task): Promise<void> {
     try {
-        await taskTable.where({ id: id }).update(task);
+        const existingTask = await taskTable.where({ id });
+        if (!existingTask || Object.keys(existingTask).length === 0) {
+            throw new Error(`Task with ID ${id} does not exist`);
+        } else {
+            await taskTable.where({ id }).update(task);
+        }
     } catch (err) {
         handleError(err, "An error occurred while updating a task");
     }
 }
 
-export async function deleteTask(id: string): Promise<void> {
+export async function deleteTask(id: number): Promise<void> {
     try {
-        await taskTable.where({ id }).del();
+        const task = await taskTable.where({ id }).first();
+        if (!task || Object.keys(task).length === 0) {
+            throw new Error(`Task with ID ${id} does not exist`);
+        } else {
+            await taskTable.where({ id }).del();
+        }
     } catch (err) {
         handleError(err, "An error occurred while deleting a task");
     }
