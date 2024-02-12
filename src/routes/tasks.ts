@@ -7,7 +7,7 @@ import express, { type Request, type Response } from "express";
 
 const router = express.Router();
 
-router.get("/", async (_req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
     try {
         const tasks = await getTasks();
         console.log(tasks);
@@ -20,7 +20,6 @@ router.get("/", async (_req: Request, res: Response) => {
 router.get("/:id", validate(TaskIdParamSchema), async (req: Request, res: Response) => {
     try {
         const task = await getTask(req.params.id);
-        console.log(task);
         res.json(task);
     } catch (err) {
         res.status(500).json(err);
@@ -30,7 +29,7 @@ router.get("/:id", validate(TaskIdParamSchema), async (req: Request, res: Respon
 router.post("/create", validate(TaskSchema), async (req: Request, res: Response) => {
     try {
         await addTask(req.body);
-        res.status(200).json("Task added");
+        res.status(200).json(`Task added: ${req.body}`);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -39,7 +38,7 @@ router.post("/create", validate(TaskSchema), async (req: Request, res: Response)
 router.put("/update/:id", validate(TaskIdParamSchema), validate(TaskSchema), async (req: Request, res: Response) => {
     try {
         await updateTask(Number(req.params.id), req.body);
-        res.status(200).json("Task updated");
+        res.status(200).json(`Task updated: ${req.body}`);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -48,7 +47,7 @@ router.put("/update/:id", validate(TaskIdParamSchema), validate(TaskSchema), asy
 router.delete("/delete/:id", validate(TaskIdParamSchema), async (req: Request, res: Response) => {
     try {
         await deleteTask(req.params.id);
-        res.status(200).json("Task deleted");
+        res.status(200).json(`Task deleted with the ID of ${req.params.id}`);
     } catch (err) {
         res.status(500).json(err);
     }

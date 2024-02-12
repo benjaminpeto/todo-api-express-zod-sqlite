@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type Task, type TaskIdParam } from "@/models/tasks.model";
 import { type Knex, knex } from "knex";
 
@@ -13,6 +10,7 @@ const config: Knex.Config = {
 };
 
 const knexInstance = knex(config);
+const taskTable = knexInstance.table("task");
 
 knexInstance.schema
     .hasTable("task")
@@ -35,7 +33,9 @@ knexInstance.schema
 knexInstance("task")
     .count("* as count")
     .first()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .then((row: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (row.count === 0) {
             return knexInstance("task").insert([{ name: "Task 1" }, { name: "Task 2" }, { name: "Task 3" }]);
         }
@@ -43,68 +43,57 @@ knexInstance("task")
     .then(() => {
         console.log("Tasks created");
     })
-    .catch((err: any) => {
+    .catch((err: Error) => {
         console.error(err);
     });
 
-export async function getTasks() {
+function handleError(err: unknown, message: string): never {
+    if (err instanceof Error) {
+        throw new Error(err.message);
+    } else {
+        throw new Error(message);
+    }
+}
+
+export async function getTasks(): Promise<Task[]> {
     try {
         const tasks: Task[] = await knexInstance.select("*").from("task");
         return tasks;
     } catch (err) {
-        if (err instanceof Error) {
-            throw new Error(err.message);
-        } else {
-            throw new Error("An error occurred while fetching tasks");
-        }
+        handleError(err, "An error occurred while fetching all tasks");
     }
 }
 
-export async function getTask(id: string) {
+export async function getTask(id: string): Promise<TaskIdParam[]> {
     try {
-        const task: TaskIdParam[] = await knexInstance.select("*").from("task").where({ id });
+        const task = await knexInstance.select("*").from("task").where({ id });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return task;
     } catch (err) {
-        if (err instanceof Error) {
-            throw new Error(err.message);
-        } else {
-            throw new Error("An error occurred while fetching a task");
-        }
+        handleError(err, "An error occurred while fetching a task");
     }
 }
 
-export async function addTask(task: Task) {
+export async function addTask(task: Task): Promise<void> {
     try {
-        await knexInstance("task").insert(task);
+        await taskTable.insert(task);
     } catch (err) {
-        if (err instanceof Error) {
-            throw new Error(err.message);
-        } else {
-            throw new Error("An error occurred while adding a task");
-        }
+        handleError(err, "An error occurred while adding a task");
     }
 }
 
-export async function updateTask(id: number, task: Task) {
+export async function updateTask(id: number, task: Task): Promise<void> {
     try {
-        await knexInstance("task").where({ id: id }).update(task);
+        await taskTable.where({ id: id }).update(task);
     } catch (err) {
-        if (err instanceof Error) {
-            throw new Error(err.message);
-        } else {
-            throw new Error("An error occurred while updating a task");
-        }
+        handleError(err, "An error occurred while updating a task");
     }
 }
 
-export async function deleteTask(id: string) {
+export async function deleteTask(id: string): Promise<void> {
     try {
-        await knexInstance("task").where({ id }).del();
+        await taskTable.where({ id }).del();
     } catch (err) {
-        if (err instanceof Error) {
-            throw new Error(err.message);
-        } else {
-            throw new Error("An error occurred while deleting a task");
-        }
+        handleError(err, "An error occurred while deleting a task");
     }
 }
