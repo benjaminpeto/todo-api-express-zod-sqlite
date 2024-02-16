@@ -9,9 +9,8 @@ const getAllUsersRouter = express.Router();
 
 getAllUsersRouter.get("/", async (req: Request, res: Response) => {
     try {
-        const tasks = await getUsers();
-
-        res.json(tasks);
+        const users = await getUsers();
+        res.json(users);
     } catch (err) {
         res.status(500).json(err);
     }

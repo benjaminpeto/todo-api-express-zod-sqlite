@@ -11,7 +11,7 @@ createTaskRouter.post("/", validate(TaskSchema), async (req: Request, res: Respo
     try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         await addTask(req.body);
-        res.status(200).json(`Task added`);
+        res.status(200).json(`Task added successfully`);
     } catch (err) {
         res.status(500).json(err);
     }

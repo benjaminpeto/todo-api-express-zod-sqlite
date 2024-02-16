@@ -1,4 +1,5 @@
 import { type Knex, knex } from "knex";
+import { getHashedPassword } from "@/utils/hashPassword";
 
 const config: Knex.Config = {
     client: "sqlite3",
@@ -44,14 +45,30 @@ knexInstance.schema
                     table.string("name").notNullable();
                     table.string("email").notNullable().unique();
                     table.string("password").notNullable();
+                    table.string("confirmPassword").notNullable(); // might have to be optional when user signin for example??
                 })
-                .then(() => {
+                .then(async () => {
                     console.log("> Table USERS created successfully!");
 
                     return knexInstance("users").insert([
-                        { name: "User 1", email: "user1@example.com", password: "password1" },
-                        { name: "User 2", email: "user2@example.com", password: "password2" },
-                        { name: "User 3", email: "user3@example.com", password: "password3" },
+                        {
+                            name: "User 1",
+                            email: "user1@example.com",
+                            password: await getHashedPassword("password1"),
+                            confirmPassword: await getHashedPassword("password1"),
+                        },
+                        {
+                            name: "User 2",
+                            email: "user2@example.com",
+                            password: await getHashedPassword("password2"),
+                            confirmPassword: await getHashedPassword("password2"),
+                        },
+                        {
+                            name: "User 3",
+                            email: "user3@example.com",
+                            password: await getHashedPassword("password3"),
+                            confirmPassword: await getHashedPassword("password3"),
+                        },
                     ]);
                 })
                 .then(() => {

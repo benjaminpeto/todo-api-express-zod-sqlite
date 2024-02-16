@@ -1,7 +1,8 @@
+import { type RegisterUser } from "@/models/users.model";
 import { type NextFunction, type Request, type Response } from "express";
-import { type AnyZodObject } from "zod";
+import { type ZodType, type AnyZodObject } from "zod";
 
-export const validate = (schema: AnyZodObject) => async (req: Request, res: Response, next: NextFunction) => {
+export const validate = (schema: AnyZodObject | ZodType<RegisterUser>) => async (req: Request, res: Response, next: NextFunction) => {
     try {
         await schema.parseAsync({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
