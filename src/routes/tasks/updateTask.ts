@@ -23,10 +23,8 @@ updateTaskRouter.put("/:id", validate(TaskIdParamSchema), validate(TaskSchema), 
 });
 
 async function updateTask(id: number, task: Task): Promise<void> {
-    console.log("ID:", id);
     try {
         const hasUpdatedTask = Boolean(await knexInstance.table("task").update(task).where({ id }));
-        console.log("hasUpdatedTask:", hasUpdatedTask);
         if (!hasUpdatedTask) {
             throw new Error(`Task with ID ${id} does not exist`);
         }
