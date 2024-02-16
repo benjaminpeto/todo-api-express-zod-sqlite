@@ -20,7 +20,6 @@ createUserRouter.post("/register", validate(registerUserSchema), async (req: Req
 });
 
 async function createUser(user: RegisterUser["body"]): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
     const hashedPassword = await getHashedPassword(user.password);
 
     const newUser = {

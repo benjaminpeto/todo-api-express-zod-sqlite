@@ -8,11 +8,12 @@ import updateTaskRouter from "./routes/tasks/updateTask";
 import deleteTaskRouter from "./routes/tasks/deleteTask";
 import createUserRouter from "./routes/users/createUser";
 import getSingleUserRouter from "./routes/users/getSingleUser";
+import updateUserRouter from "./routes/users/updateUser";
 
 const app: Application = express();
 
 app.use(express.json());
-app.use("/users", getAllUsersRouter, createUserRouter, getSingleUserRouter as Router);
+app.use("/users", getAllUsersRouter, createUserRouter, getSingleUserRouter, updateUserRouter as Router);
 app.use("/tasks", getAllTasksRouter, getSingleTaskRouter, createTaskRouter, updateTaskRouter, deleteTaskRouter as Router);
 
 app.get("/", (_req: Request, res: Response) => {

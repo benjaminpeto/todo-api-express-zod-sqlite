@@ -42,3 +42,24 @@ export const UserIdParamsToCustomParams = UserIdParamSchema.transform(({ params 
 }));
 
 export type UserIdParam = z.infer<typeof UserIdParamSchema>;
+
+export const updateUserSchema = z.object({
+    body: z
+        .object({
+            name: z.string().min(2, { message: "Name must be at least 2 characters long" }).optional(),
+            email: z.string().email({ message: "Invalid email address" }).optional(),
+            password: z.string().min(6, { message: "Password must contain minimum 6 characters!" }).optional(),
+            confirmPassword: z.string().min(6, { message: "Password must contain minimum 6 characters!" }).optional(),
+        })
+        .superRefine(({ confirmPassword, password }, ctx) => {
+            if (confirmPassword !== password) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: "The passwords did not match",
+                    path: ["confirmPassword"],
+                });
+            }
+        }),
+});
+
+export type UpdateUser = z.infer<typeof updateUserSchema>;
