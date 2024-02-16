@@ -30,3 +30,15 @@ export const registerUserSchema = z.object({
 });
 
 export type RegisterUser = z.infer<typeof registerUserSchema>;
+
+export const UserIdParamSchema = z.object({
+    params: z.object({
+        id: z.string(),
+    }),
+});
+
+export const UserIdParamsToCustomParams = UserIdParamSchema.transform(({ params }) => ({
+    id: Number(params.id),
+}));
+
+export type UserIdParam = z.infer<typeof UserIdParamSchema>;

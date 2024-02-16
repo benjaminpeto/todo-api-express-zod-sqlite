@@ -7,6 +7,8 @@ export const TaskSchema = z.object({
     }),
 });
 
+export type Task = z.infer<typeof TaskSchema>;
+
 export const TaskIdParamSchema = z.object({
     params: z.object({
         id: z.string(),
@@ -17,5 +19,4 @@ export const TaskIdParamsToCustomParams = TaskIdParamSchema.transform(({ params 
     id: Number(params.id),
 }));
 
-export type Task = z.infer<typeof TaskSchema>;
 export type TaskIdParam = z.infer<typeof TaskIdParamSchema>;
